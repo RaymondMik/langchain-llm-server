@@ -28,6 +28,7 @@ from langchain.embeddings import OpenAIEmbeddings
 # ROUTES
 from routes.llm_chain import llm_chain_route
 from routes.memories import memories_route
+from routes.simple_sequential_chain import simple_sequential_chain_route
 
 load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -35,6 +36,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 app = Flask(__name__)
 app.register_blueprint(llm_chain_route)
 app.register_blueprint(memories_route)
+app.register_blueprint(simple_sequential_chain_route)
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -42,33 +44,6 @@ if __name__ == "__main__":
 @app.route("/")
 def hello_world():
     return 'hello world'
-
-# single I/O chain
-@app.route("/simple_sequential_chain")
-def simple_sequential_chain():
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
-    product = "Queen Size Sheet Set"
-
-    # prompt template 1
-    first_prompt = ChatPromptTemplate.from_template(
-        "What is the best name to describe \
-        a company that makes {product}?"
-    )
-
-    # Chain 1
-    chain_one = LLMChain(llm=llm, prompt=first_prompt)
-
-    # prompt template 2
-    second_prompt = ChatPromptTemplate.from_template(
-        "Write a 20 words description for the following \
-        company:{company_name}"
-    )
-    # chain 2
-    chain_two = LLMChain(llm=llm, prompt=second_prompt)
-
-    overall_simple_chain = SimpleSequentialChain(chains=[chain_one, chain_two], verbose=True)
-      
-    return overall_simple_chain.run(product)
 
 # multiple I/O chain
 @app.route("/sequential_chain")
