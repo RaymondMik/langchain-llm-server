@@ -1,0 +1,14 @@
+# .gitignore
+
+# Environments
+venv
+.venv
+.DS_Store
+files
+**/__pycache__
+.idea/
+tests/*
+
+# Ignore all .env files (Environment variables files)
+.env
+
