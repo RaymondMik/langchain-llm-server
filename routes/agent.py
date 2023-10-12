@@ -91,6 +91,7 @@ custom_agent_route = Blueprint('custom_agent_route', __name__)
 
 @custom_agent_route.route("/custom_agent")
 def custom_agent():  
+    query = request.args.get("query")
     requests = TextRequestsWrapper()
 
     # @tool
@@ -105,7 +106,8 @@ def custom_agent():
     
     @tool
     def api_request(text: str) -> str:
-        """Return the value returned by the function below. It is always a string."""
+        """Return the value provided by the below GET HTTP request. \
+           The value returned the request is always a Python dictionary."""
         return requests.get("https://webhook.site/54511a40-b58a-49f9-81cd-94cb5780d78a")
 
     llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
@@ -121,7 +123,7 @@ def custom_agent():
     langchain.debug=True
     
     try:
-        result = agent("Make an API request") 
+        result = agent(query) 
     except: 
         print("exception on external access")
   
