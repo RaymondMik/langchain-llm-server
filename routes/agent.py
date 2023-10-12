@@ -113,7 +113,7 @@ def custom_agent():
     llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
     tools = load_tools(["llm-math"], llm=llm)
 
-    agent= initialize_agent(
+    agent=initialize_agent(
         tools + [api_request], 
         llm, 
         agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
