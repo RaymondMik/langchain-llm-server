@@ -11,6 +11,7 @@ from routes.simple_sequential_chain import simple_sequential_chain_route
 from routes.sequential_chain import sequential_chain_route
 from routes.router_chain import router_chain_route
 from routes.retrieval import retrieval_route
+from routes.retrieval import retrieval_web_route
 from routes.agent import agent_route
 from routes.agent import python_agent_route
 from routes.agent import custom_agent_route
@@ -26,13 +27,14 @@ app.register_blueprint(simple_sequential_chain_route)
 app.register_blueprint(sequential_chain_route)
 app.register_blueprint(router_chain_route)
 app.register_blueprint(retrieval_route)
+app.register_blueprint(retrieval_web_route)
 app.register_blueprint(agent_route)
 app.register_blueprint(python_agent_route)
 app.register_blueprint(custom_agent_route)
 app.register_blueprint(evaluation_route)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)
 
 @app.route('/')
 def hello_world():
