@@ -14,21 +14,21 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 
 router_chain_route = Blueprint('router_chain_route', __name__)
 
-@router_chain_route.route("/router_chain")
+@router_chain_route.route('/router_chain')
 def router_chain():
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
+    llm = ChatOpenAI(temperature=0.9, model='gpt-3.5-turbo', openai_api_key=openai_api_key)
 
-    physics_template = """You are a very smart physics professor. \
+    physics_template = '''You are a very smart physics professor. \
     You are great at answering questions about physics in a concise\
     and easy to understand manner. \
     When you don't know the answer to a question you admit\
     that you don't know.
 
     Here is a question:
-    {input}"""
+    {input}'''
 
 
-    math_template = """You are a very good mathematician. \
+    math_template = '''You are a very good mathematician. \
     You are great at answering math questions. \
     You are so good because you are able to break down \
     hard problems into their component parts, 
@@ -36,9 +36,9 @@ def router_chain():
     to answer the broader question.
 
     Here is a question:
-    {input}"""
+    {input}'''
 
-    history_template = """You are a very good historian. \
+    history_template = '''You are a very good historian. \
     You have an excellent knowledge of and understanding of people,\
     events and contexts from a range of historical periods. \
     You have the ability to think, reflect, debate, discuss and \
@@ -47,10 +47,10 @@ def router_chain():
     and judgements.
 
     Here is a question:
-    {input}"""
+    {input}'''
 
 
-    computerscience_template = """ You are a successful computer scientist.\
+    computerscience_template = ''' You are a successful computer scientist.\
     You have a passion for creativity, collaboration,\
     forward-thinking, confidence, strong problem-solving capabilities,\
     understanding of theories and algorithms, and excellent communication \
@@ -62,46 +62,46 @@ def router_chain():
     time complexity and space complexity. 
 
     Here is a question:
-    {input}"""
+    {input}'''
 
     prompt_infos = [
         {
-            "name": "physics", 
-            "description": "Good for answering questions about physics", 
-            "prompt_template": physics_template
+            'name': 'physics', 
+            'description': 'Good for answering questions about physics', 
+            'prompt_template': physics_template
         },
         {
-            "name": "math", 
-            "description": "Good for answering math questions", 
-            "prompt_template": math_template
+            'name': 'math', 
+            'description': 'Good for answering math questions', 
+            'prompt_template': math_template
         },
         {
-            "name": "History", 
-            "description": "Good for answering history questions", 
-            "prompt_template": history_template
+            'name': 'History', 
+            'description': 'Good for answering history questions', 
+            'prompt_template': history_template
         },
         {
-            "name": "computer science", 
-            "description": "Good for answering computer science questions", 
-            "prompt_template": computerscience_template
+            'name': 'computer science', 
+            'description': 'Good for answering computer science questions', 
+            'prompt_template': computerscience_template
         }
     ]
 
     destination_chains = {}
     for p_info in prompt_infos:
-        name = p_info["name"]
-        prompt_template = p_info["prompt_template"]
+        name = p_info['name']
+        prompt_template = p_info['prompt_template']
         prompt = ChatPromptTemplate.from_template(template=prompt_template)
         chain = LLMChain(llm=llm, prompt=prompt)
         destination_chains[name] = chain  
         
-    destinations = [f"{p['name']}: {p['description']}" for p in prompt_infos]
-    destinations_str = "\n".join(destinations)
+    destinations = [f'{p["name"]}: {p["description"]}' for p in prompt_infos]
+    destinations_str = '\n'.join(destinations)
 
-    default_prompt = ChatPromptTemplate.from_template("{input}")
+    default_prompt = ChatPromptTemplate.from_template('{input}')
     default_chain = LLMChain(llm=llm, prompt=default_prompt)   
 
-    MULTI_PROMPT_ROUTER_TEMPLATE = """Given a raw text input to a \
+    MULTI_PROMPT_ROUTER_TEMPLATE = '''Given a raw text input to a \
     language model select the model prompt best suited for the input. \
     You will be given the names of the available prompts and a \
     description of what the prompt is best suited for. \
@@ -112,15 +112,15 @@ def router_chain():
     Return a markdown code snippet with a JSON object formatted to look like:
     ```json
     {{{{
-        "destination": string \ name of the prompt to use or "DEFAULT"
-        "next_inputs": string \ a potentially modified version of the original input
+        'destination': string \ name of the prompt to use or 'DEFAULT'
+        'next_inputs': string \ a potentially modified version of the original input
     }}}}
     ```
 
-    REMEMBER: "destination" MUST be one of the candidate prompt \
-    names specified below OR it can be "DEFAULT" if the input is not\
+    REMEMBER: 'destination' MUST be one of the candidate prompt \
+    names specified below OR it can be 'DEFAULT' if the input is not\
     well suited for any of the candidate prompts.
-    REMEMBER: "next_inputs" can just be the original input \
+    REMEMBER: 'next_inputs' can just be the original input \
     if you don't think any modifications are needed.
 
     << CANDIDATE PROMPTS >>
@@ -129,7 +129,7 @@ def router_chain():
     << INPUT >>
     {{input}}
 
-    << OUTPUT (remember to include the ```json)>>""" 
+    << OUTPUT (remember to include the ```json)>>''' 
 
     router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(
         destinations=destinations_str
@@ -137,7 +137,7 @@ def router_chain():
 
     router_prompt = PromptTemplate(
         template=router_template,
-        input_variables=["input"],
+        input_variables=['input'],
         output_parser=RouterOutputParser(),
     )
 
@@ -148,4 +148,4 @@ def router_chain():
                          default_chain=default_chain, verbose=True
                         )
 
-    return chain.run("What is black body radiation?")
+    return chain.run('What is black body radiation?')

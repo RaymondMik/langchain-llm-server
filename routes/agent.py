@@ -15,13 +15,13 @@ serpapi_api_key = os.getenv('SERPAPI_API_KEY')
 
 agent_route = Blueprint('agent_route', __name__)
 
-@agent_route.route("/agent")
+@agent_route.route('/agent')
 def agent():  
-    query = request.args.get("query")
-    print("QUERY", query)
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
-    # tools = load_tools(["llm-math","wikipedia"], llm=llm)
-    tools = load_tools(["llm-math","serpapi"], llm=llm)
+    query = request.args.get('query')
+    print('QUERY', query)
+    llm = ChatOpenAI(temperature=0.9, model='gpt-3.5-turbo', openai_api_key=openai_api_key)
+    # tools = load_tools(['llm-math','wikipedia'], llm=llm)
+    tools = load_tools(['llm-math','serpapi'], llm=llm)
 
     agent= initialize_agent(
         tools, 
@@ -34,9 +34,9 @@ def agent():
 
 python_agent_route = Blueprint('python_agent_route', __name__)
 
-@python_agent_route.route("/python_agent")
+@python_agent_route.route('/python_agent')
 def python_agent():  
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
+    llm = ChatOpenAI(temperature=0.9, model='gpt-3.5-turbo', openai_api_key=openai_api_key)
 
     agent = create_python_agent(
         llm,
@@ -46,32 +46,32 @@ def python_agent():
     )
 
     customer_list = [
-                ["Harrison", "Chase"], 
-                 ["Lang", "Chain"],
-                 ["Dolly", "Too"],
-                 ["Elle", "Elem"], 
-                 ["Geoff","Fusion"], 
-                 ["Trance","Former"],
-                 ["Jen","Ayai"]
+                ['Harrison', 'Chase'], 
+                 ['Lang', 'Chain'],
+                 ['Dolly', 'Too'],
+                 ['Elle', 'Elem'], 
+                 ['Geoff','Fusion'], 
+                 ['Trance','Former'],
+                 ['Jen','Ayai']
                 ]
     
     langchain.debug=True
-    result = agent.run(f"""Sort these customers by \
+    result = agent.run(f'''Sort these customers by \
         last name and then first name \
-        and print the output: {customer_list}""") 
+        and print the output: {customer_list}''') 
     langchain.debug=False
 
     return result
 
 agent_route = Blueprint('agent_route', __name__)
 
-@agent_route.route("/agent")
+@agent_route.route('/agent')
 def agent():  
-    query = request.args.get("query")
-    print("QUERY", query)
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
-    # tools = load_tools(["llm-math","wikipedia"], llm=llm)
-    tools = load_tools(["llm-math","serpapi"], llm=llm)
+    query = request.args.get('query')
+    print('QUERY', query)
+    llm = ChatOpenAI(temperature=0.9, model='gpt-3.5-turbo', openai_api_key=openai_api_key)
+    # tools = load_tools(['llm-math','wikipedia'], llm=llm)
+    tools = load_tools(['llm-math','serpapi'], llm=llm)
 
     agent= initialize_agent(
         tools, 
@@ -89,29 +89,29 @@ from datetime import date
 
 custom_agent_route = Blueprint('custom_agent_route', __name__)
 
-@custom_agent_route.route("/custom_agent")
+@custom_agent_route.route('/custom_agent')
 def custom_agent():  
-    query = request.args.get("query")
+    query = request.args.get('query')
     requests = TextRequestsWrapper()
 
     # @tool
     # def time(text: str) -> str:
-    #     f"""Returns todays date, use this for any \
+    #     f'''Returns todays date, use this for any \
     #     questions related to knowing todays date. \
     #     The input should always be an empty string, \
     #     and this function will always return todays \
     #     date - any date mathmatics should occur \
-    #     outside this function.{query}"""
+    #     outside this function.{query}'''
     #     return str(date.today())
     
     @tool
     def api_request(text: str) -> str:
-        """Return the value provided by the below GET HTTP request. \
-           The value returned the request is always a Python dictionary."""
-        return requests.get("https://webhook.site/54511a40-b58a-49f9-81cd-94cb5780d78a")
+        '''Return the value provided by the below GET HTTP request. \
+           The value returned the request is always a Python dictionary.'''
+        return requests.get('https://webhook.site/54511a40-b58a-49f9-81cd-94cb5780d78a')
 
-    llm = ChatOpenAI(temperature=0.9, model="gpt-3.5-turbo", openai_api_key=openai_api_key)
-    tools = load_tools(["llm-math"], llm=llm)
+    llm = ChatOpenAI(temperature=0.9, model='gpt-3.5-turbo', openai_api_key=openai_api_key)
+    tools = load_tools(['llm-math'], llm=llm)
 
     agent=initialize_agent(
         tools + [api_request], 
@@ -125,7 +125,7 @@ def custom_agent():
     try:
         result = agent(query) 
     except: 
-        print("exception on external access")
+        print('exception on external access')
   
     langchain.debug=False
 
